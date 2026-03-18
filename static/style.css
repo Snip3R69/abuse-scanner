@@ -34,18 +34,6 @@ button {
     color: #ccc; font-family: monospace; resize: none;
 }
 
-footer {
-    width: 100%;             /* Take up full width */
-    margin-top: 50px;
-    padding: 20px 0;
-    border-top: 1px solid #333;
-    font-size: 0.8em;
-    color: #666;
-    text-align: center;      /* Center the text */
-    clear: both;             /* Ensure it doesn't wrap around side elements */
-    display: block;          /* Make it a block element */
-}
-
 #subjectBox { color: #00ff00; }
 #bodyBox { font-size: 0.85em; line-height: 1.4; }
 
