@@ -1,0 +1,40 @@
+body {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.container { width: 100%; max-width: 850px; text-align: center; }
+
+.input-form input, .input-form select {
+    width: 95%; padding: 12px; margin: 8px 0;
+    background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 4px;
+}
+
+.side-by-side { display: flex; gap: 10px; justify-content: center; width: 98%; margin: 0 auto; }
+.side-by-side input { width: 48%; }
+
+button {
+    padding: 15px 30px; background-color: #005f00; color: white;
+    border: 1px solid #00ff00; cursor: pointer; font-weight: bold; margin-top: 15px;
+}
+
+.result-card {
+    text-align: left; background: #222; padding: 25px;
+    border: 1px solid #333; margin-top: 30px; border-radius: 8px;
+}
+
+.highlight { color: #55aaff; font-weight: bold; }
+
+#subjectBox, #bodyBox {
+    width: 97%; padding: 10px; background: #111; border: 1px solid #444;
+    color: #ccc; font-family: monospace; resize: none;
+}
+
+#subjectBox { color: #00ff00; }
+#bodyBox { font-size: 0.85em; line-height: 1.4; }
+
+.error-msg { color: #ff5555; background: #322; padding: 10px; border: 1px solid #ff5555; }

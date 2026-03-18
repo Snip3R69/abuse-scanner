@@ -1,0 +1,6 @@
+flask
+tldextract
+python-whois
+dnspython
+requests
+gunicorn

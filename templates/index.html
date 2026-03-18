@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Abuse Scanner | ReliaQuest Tools</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Abuse Scanner</h1>
+        
+        <form method="POST" class="input-form">
+            <input type="text" name="target_url" placeholder="Enter Target URL/Domain" value="{{ target_url }}" required autofocus>
+            
+            <select name="takedown_type" required>
+                <option value="">-- Select Takedown Type --</option>
+                <option value="dmca" {% if takedown_type == 'dmca' %}selected{% endif %}>DMCA (Copyright)</option>
+                <option value="trademark" {% if takedown_type == 'trademark' %}selected{% endif %}>Trademark Infringement</option>
+                <option value="phishing" {% if takedown_type == 'phishing' %}selected{% endif %}>Phishing Content</option>
+            </select>
+
+            <div class="side-by-side">
+                <input type="text" name="company" placeholder="Company Name" value="{{ company }}" required>
+                <input type="text" name="brand" placeholder="Brand Name" value="{{ brand }}" required>
+            </div>
+            
+            <button type="submit">Analyze & Generate Template</button>
+        </form>
+
+        {% if error %}
+            <p class="error-msg">{{ error }}</p>
+        {% endif %}
+
+        {% if results %}
+            <div class="result-card">
+                <h2 style="color: #00ff00;">Scan Results: {{ results.target }}</h2>
+                <div class="tech-info">
+                    <p><strong>Registrar:</strong> {{ results.registrar }} | <strong>Abuse:</strong> <span class="highlight">{{ results.registrar_abuse }}</span></p>
+                    <p><strong>Host Provider:</strong> {{ results.host_provider }} | <strong>Abuse:</strong> 
+                        <span class="highlight">
+                            {% if results.is_cloudflare %}
+                                <a href="https://abuse.cloudflare.com/" target="_blank" style="color: #ff8c00; text-decoration: underline;">SUBMIT CLOUDFLARE FORM</a>
+                            {% else %}
+                                {{ results.host_abuse }}
+                            {% endif %}
+                        </span>
+                    </p>
+                    <p><strong>Resolved IP:</strong> {{ results.ip_address }}</p>
+                </div>
+
+                <hr style="border: 0.5px solid #444; margin: 25px 0;">
+
+                <h3 style="color: #55aaff;">ReliaQuest Takedown Template</h3>
+                <div id="emailTemplate">
+                    <p><strong>Subject:</strong></p>
+                    <input type="text" id="subjectBox" readonly>
+                    
+                    <p style="margin-top: 15px;"><strong>Body:</strong></p>
+                    <textarea id="bodyBox" rows="18" readonly></textarea>
+                    <button type="button" onclick="copyBody()" style="background: #444; border: 1px solid #888; font-size: 0.8em; padding: 5px 10px;">Copy Body</button>
+                </div>
+            </div>
+
+            <script>
+                const type = "{{ takedown_type }}";
+                const url = "{{ target_url }}";
+                const company = "{{ company }}";
+                const brand = "{{ brand }}";
+                
+                const templates = {
+                    dmca: {
+                        sub: `DMCA Takedown Notice - Copyright Infringement on ${url}`,
+                        body: `To Whom It May Concern,\n\nI am writing to notify you of copyright infringement occurring on your platform. We are authorized representatives acting on behalf of the rights holder.\n\nThe details of the infringing content are as follows:\n\nWebpage: ${url}\nCompany: ${company}\nBrand: ${brand}\nOriginal Content: [provide original content manually]\n\nThe content available at the above-mentioned URL infringes upon copyrighted material owned by our client. We request that you promptly remove or disable access to this content in accordance with the Digital Millennium Copyright Act (DMCA).\n\nWe have a good faith belief that the use of the copyrighted material described above is not authorized by the copyright owner, its agent, or the law.\n\nThe information in this notice is accurate, and under penalty of perjury, we state that we are authorized to act on behalf of the owner of the exclusive rights that are allegedly infringed.\n\nRegards,\nReliaQuest`
+                    },
+                    trademark: {
+                        sub: `Trademark Infringement Notice: ${brand} - ${url}`,
+                        body: `To Whom It May Concern,\n\nI am writing to notify you of trademark infringement occurring on your platform. We are authorized representatives acting on behalf of the trademark owner.\n\nThe details of the infringing content are as follows:\n\nWebpage: ${url}\nCompany: ${company}\nBrand: ${brand}\n\nTrademark information: (to be filled by user manually)\n\nRegistration Number:\nIP office:\n\nThe content available at the above-mentioned URL unlawfully uses and/or reproduces our client’s trademark without authorization, which is likely to cause confusion, deception, or mistake among users regarding the source, affiliation, or endorsement of the content.\n\nWe request that you promptly remove or disable access to this infringing material.\n\nWe have a good faith belief that the use of the trademark described above is not authorized by the trademark owner, its agent, or the law.\n\nThe information provided in this notice is accurate, and we are authorized to act on behalf of the trademark owner in this matter.\n\nRegards,\nReliaQuest`
+                    },
+                    phishing: {
+                        sub: `URGENT: Phishing/Scam Site Report - ${url}`,
+                        body: `To Whom It May Concern,\n\nI am writing to report a phishing and impersonation incident occurring on your platform. We are authorized representatives acting on behalf of the affected organization.\n\nThe details of the reported content are as follows:\n\nWebpage: ${url}\nCompany: ${company}\nBrand: ${brand}\n\nThe content hosted at the above-mentioned URL is engaging in phishing activity by impersonating our client’s brand and attempting to mislead users into disclosing sensitive information or engaging in fraudulent actions. This activity is unauthorized and poses a significant risk to users as well as to our client’s reputation.\n\nWe request that you urgently investigate this matter and promptly remove or disable access to the reported content.\n\nWe have a good faith belief that the reported activity is fraudulent, unauthorized, and in violation of your platform’s terms of service and applicable laws.\n\nThe information provided in this notice is accurate, and we are authorized to act on behalf of the affected organization in this matter.\n\nRegards,\nReliaQuest`
+                    }
+                };
+
+                if(templates[type]) {
+                    document.getElementById('subjectBox').value = templates[type].sub;
+                    document.getElementById('bodyBox').value = templates[type].body;
+                }
+
+                function copyBody() {
+                    const body = document.getElementById('bodyBox');
+                    body.select();
+                    document.execCommand('copy');
+                    alert('Template copied to clipboard!');
+                }
+            </script>
+        {% endif %}
+    </div>
+</body>
+</html>
